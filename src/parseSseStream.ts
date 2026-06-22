@@ -1,9 +1,11 @@
-import type { ChatResponseChunk, ToolEvent } from "../types/chat";
+import type { ChatResponseChunk, ToolEvent, TraceEvent, UsageEvent } from "../types/chat";
 
 export type SseEvent =
   | { type: "message"; chunk: ChatResponseChunk }
   | { type: "tool_start"; event: ToolEvent }
   | { type: "tool_end"; event: ToolEvent }
+  | { type: "trace"; event: TraceEvent }
+  | { type: "usage"; event: UsageEvent }
   | { type: "plan_ready"; content: string }
   | { type: "done" };
 
@@ -36,6 +38,10 @@ export async function* parseSseStream(
           yield { type: "tool_start", event: data as ToolEvent };
         } else if (currentEvent === "tool_end") {
           yield { type: "tool_end", event: data as ToolEvent };
+        } else if (currentEvent === "trace") {
+          yield { type: "trace", event: data as TraceEvent };
+        } else if (currentEvent === "usage") {
+          yield { type: "usage", event: data as UsageEvent };
         } else {
           yield { type: "message", chunk: data as ChatResponseChunk };
         }
