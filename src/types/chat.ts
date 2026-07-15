@@ -7,6 +7,36 @@ export interface ToolRun {
   output?: string;
 }
 
+export interface ClarificationOption {
+  id: string;
+  label: string;
+}
+
+export type ClarificationStatus = "pending" | "submitting" | "answered" | "cancelled";
+
+export interface ClarificationState {
+  clarificationId: string;
+  threadId: string;
+  question: string;
+  options: ClarificationOption[];
+  allowMultiple: boolean;
+  allowFreeText: boolean;
+  status: ClarificationStatus;
+  selectedOptionIds?: string[];
+  freeText?: string;
+}
+
+/** Snake_case SSE payload from backend `event: clarification`. */
+export interface ClarificationPayload {
+  clarification_id: string;
+  thread_id: string;
+  question: string;
+  options: ClarificationOption[];
+  allow_multiple: boolean;
+  allow_free_text: boolean;
+  status: ClarificationStatus;
+}
+
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
@@ -14,6 +44,7 @@ export interface ChatMessage {
   citations?: string[];
   attachments?: string[];
   toolRuns?: ToolRun[];
+  clarification?: ClarificationState;
 }
 
 export interface ChatResponseChunk {

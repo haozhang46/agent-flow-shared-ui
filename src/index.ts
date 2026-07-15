@@ -1,6 +1,7 @@
 export { default as ChatMessage } from "./components/ChatMessage.vue";
 export { default as ChatInput } from "./components/ChatInput.vue";
 export { default as ToolActivityList } from "./components/ToolActivityList.vue";
+export { default as ClarificationCard } from "./components/ClarificationCard.vue";
 export { useMessages } from "./useMessages";
 export { useChatSend } from "./composables/useChatSend";
 export { useSubmitOnEnter } from "./composables/useSubmitOnEnter";
@@ -8,6 +9,17 @@ export { useTextareaUndo } from "./composables/useTextareaUndo";
 export { useTextareaHistoryKeydown } from "./composables/useTextareaHistoryKeydown";
 export { upsertToolStart, applyToolEnd } from "./composables/useToolRuns";
 export { parseSseStream } from "./parseSseStream";
-export type { ChatMessage, ChatResponseChunk, ToolEvent, ToolRun, ToolRunStatus, ChatAttachment } from "./types/chat";
+export type {
+  ChatMessage,
+  ChatResponseChunk,
+  ClarificationOption,
+  ClarificationPayload,
+  ClarificationState,
+  ClarificationStatus,
+  ToolEvent,
+  ToolRun,
+  ToolRunStatus,
+  ChatAttachment,
+} from "./types/chat";
 export type { SseEvent } from "./parseSseStream";
 export type { UseChatSendOptions } from "./composables/useChatSend";

@@ -19,7 +19,7 @@ describe("parseSseStream", () => {
     }
     expect(events).toEqual([
       { type: "message", chunk: { content: "hi" } },
-      { type: "done" },
+      { type: "done", awaiting_clarification: false },
     ]);
   });
 

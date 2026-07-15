@@ -1,4 +1,10 @@
-import type { ChatResponseChunk, ToolEvent, TraceEvent, UsageEvent } from "../types/chat";
+import type {
+  ChatResponseChunk,
+  ClarificationPayload,
+  ToolEvent,
+  TraceEvent,
+  UsageEvent,
+} from "./types/chat";
 
 export type SseEvent =
   | { type: "message"; chunk: ChatResponseChunk }
@@ -8,7 +14,8 @@ export type SseEvent =
   | { type: "trace"; event: TraceEvent }
   | { type: "usage"; event: UsageEvent }
   | { type: "plan_ready"; content: string }
-  | { type: "done" };
+  | { type: "clarification"; event: ClarificationPayload }
+  | { type: "done"; awaiting_clarification?: boolean };
 
 export async function* parseSseStream(
   body: ReadableStream<Uint8Array>,
@@ -32,7 +39,12 @@ export async function* parseSseStream(
       try {
         const data = JSON.parse(line.slice(6));
         if (currentEvent === "done") {
-          yield { type: "done" };
+          yield {
+            type: "done",
+            awaiting_clarification: Boolean(data?.awaiting_clarification),
+          };
+        } else if (currentEvent === "clarification") {
+          yield { type: "clarification", event: data as ClarificationPayload };
         } else if (currentEvent === "plan_ready") {
           yield { type: "plan_ready", content: String(data.content ?? "") };
         } else if (currentEvent === "thinking") {

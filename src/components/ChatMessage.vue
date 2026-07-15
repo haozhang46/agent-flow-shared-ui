@@ -15,7 +15,10 @@
         <p class="whitespace-pre-wrap break-words">{{ msg.content }}</p>
       </div>
     </div>
-    <div v-else-if="streaming || msg.content || msg.thinking" class="flex gap-3 min-w-0">
+    <div
+      v-else-if="streaming || msg.content || msg.thinking || msg.clarification"
+      class="flex gap-3 min-w-0"
+    >
       <div class="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0 flex items-center justify-center text-sm">
         AI
       </div>
@@ -35,12 +38,17 @@
             <pre class="px-3 py-2 whitespace-pre-wrap text-gray-500 dark:text-gray-400 leading-relaxed border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/60 m-0">{{ msg.thinking }}</pre>
           </details>
           <ToolActivityList v-if="msg.toolRuns?.length" :runs="msg.toolRuns" />
-          <div v-html="renderMarkdown(msg.content)" />
+          <div v-if="msg.content" v-html="renderMarkdown(msg.content)" />
           <span
             v-if="streaming"
             data-testid="streaming-cursor"
             class="inline-block w-0.5 h-4 ml-0.5 align-text-bottom bg-gray-500 animate-pulse"
             aria-hidden="true"
+          />
+          <ClarificationCard
+            v-if="msg.clarification"
+            :clarification="msg.clarification"
+            @submit="onClarifySubmit"
           />
         </div>
         <div v-if="msg.citations && msg.citations.length" class="mt-2 flex flex-wrap gap-1">
@@ -60,13 +68,33 @@
 <script setup lang="ts">
 import { marked } from "marked";
 import type { ChatMessage } from "../types/chat";
+import ClarificationCard from "./ClarificationCard.vue";
 import ToolActivityList from "./ToolActivityList.vue";
 
-defineProps<{ msg: ChatMessage; streaming?: boolean }>();
+const props = defineProps<{ msg: ChatMessage; streaming?: boolean }>();
+const emit = defineEmits<{
+  clarify: [
+    payload: {
+      clarificationId: string;
+      selectedOptionIds: string[];
+      freeText?: string;
+    },
+  ];
+}>();
 
 function renderMarkdown(text: string): string {
   if (!text) return "";
   return marked.parse(text) as string;
+}
+
+function onClarifySubmit(payload: { selectedOptionIds: string[]; freeText?: string }) {
+  const id = props.msg.clarification?.clarificationId;
+  if (!id) return;
+  emit("clarify", {
+    clarificationId: id,
+    selectedOptionIds: payload.selectedOptionIds,
+    freeText: payload.freeText,
+  });
 }
 </script>
 
