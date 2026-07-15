@@ -66,7 +66,7 @@
       />
 
       <button
-        v-if="interactive"
+        v-if="showSubmit"
         type="button"
         data-testid="clarification-submit"
         class="mt-3 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
@@ -100,12 +100,17 @@ watch(
   { deep: true },
 );
 
-const interactive = computed(
-  () => props.clarification.status === "pending" || props.clarification.status === "submitting",
+/** Inputs only editable while pending (not while submitting). */
+const interactive = computed(() => props.clarification.status === "pending");
+
+const showSubmit = computed(
+  () =>
+    props.clarification.status === "pending" ||
+    props.clarification.status === "submitting",
 );
 
 const canSubmit = computed(() => {
-  if (!interactive.value || props.clarification.status === "submitting") return false;
+  if (props.clarification.status !== "pending") return false;
   if (selectedIds.value.length > 0) return true;
   if (props.clarification.allowFreeText && freeText.value.trim()) return true;
   return false;

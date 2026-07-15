@@ -73,4 +73,22 @@ describe("ClarificationCard", () => {
       /opacity|opacity-/,
     );
   });
+
+  it("disables inputs while submitting but keeps submit button visible", () => {
+    const wrapper = mount(ClarificationCard, {
+      props: {
+        clarification: pendingState({
+          status: "submitting",
+          selectedOptionIds: ["yes"],
+        }),
+      },
+    });
+
+    const option = wrapper.find('[data-testid="clarification-option-yes"]');
+    expect(option.attributes("disabled")).toBeDefined();
+    const submit = wrapper.find('[data-testid="clarification-submit"]');
+    expect(submit.exists()).toBe(true);
+    expect(submit.attributes("disabled")).toBeDefined();
+    expect(submit.text()).toContain("提交中");
+  });
 });
