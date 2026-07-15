@@ -9,5 +9,10 @@ export { useTextareaHistoryKeydown } from "./composables/useTextareaHistoryKeydo
 export { upsertToolStart, applyToolEnd } from "./composables/useToolRuns";
 export { parseSseStream } from "./parseSseStream";
 export type { ChatMessage, ChatResponseChunk, ToolEvent, ToolRun, ToolRunStatus, ChatAttachment } from "./types/chat";
-export type { SseEvent } from "./parseSseStream";
+export type {
+  SseEvent,
+  ClarificationSsePayload,
+  ClarificationOption,
+  ClarificationStatus,
+} from "./parseSseStream";
 export type { UseChatSendOptions } from "./composables/useChatSend";
