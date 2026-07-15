@@ -68,12 +68,24 @@ export function useMessages(threadId: Ref<string | null>) {
     save();
   }
 
+  function addThinkingChunk(content: string) {
+    ensureAssistantShell();
+    const idx = messages.value.length - 1;
+    const last = messages.value[idx]!;
+    messages.value[idx] = {
+      ...last,
+      thinking: (last.thinking || "") + content,
+    };
+    save();
+  }
+
   return {
     messages,
     loading,
     load,
     addUserMessage,
     addAssistantChunk,
+    addThinkingChunk,
     applyToolStart,
     applyToolEnd,
   };

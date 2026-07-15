@@ -31,4 +31,21 @@ describe("ChatMessage", () => {
 
     expect(wrapper.findAll('[data-testid="message-attachment-chip"]')).toHaveLength(0);
   });
+
+  it("shows thinking block for assistant messages", () => {
+    const wrapper = mount(ChatMessage, {
+      props: {
+        msg: {
+          role: "assistant",
+          content: "final answer",
+          thinking: "first reason step by step",
+        },
+      },
+    });
+
+    expect(wrapper.find('[data-testid="thinking-block"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain("思考过程");
+    expect(wrapper.text()).toContain("first reason step by step");
+    expect(wrapper.text()).toContain("final answer");
+  });
 });

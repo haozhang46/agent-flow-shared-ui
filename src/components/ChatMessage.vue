@@ -15,7 +15,7 @@
         <p class="whitespace-pre-wrap break-words">{{ msg.content }}</p>
       </div>
     </div>
-    <div v-else class="flex gap-3 min-w-0">
+    <div v-else-if="streaming || msg.content || msg.thinking" class="flex gap-3 min-w-0">
       <div class="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0 flex items-center justify-center text-sm">
         AI
       </div>
@@ -23,6 +23,17 @@
         <div
           class="chat-message-content bg-gray-100 dark:bg-gray-700 rounded-2xl rounded-bl-md px-4 py-3 prose dark:prose-invert max-w-none break-words"
         >
+          <details
+            v-if="msg.thinking"
+            class="mb-3 not-prose text-xs border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden"
+            data-testid="thinking-block"
+            open
+          >
+            <summary class="cursor-pointer px-3 py-2 text-gray-500 dark:text-gray-400 select-none">
+              思考过程
+            </summary>
+            <pre class="px-3 py-2 whitespace-pre-wrap text-gray-500 dark:text-gray-400 leading-relaxed border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/60 m-0">{{ msg.thinking }}</pre>
+          </details>
           <ToolActivityList v-if="msg.toolRuns?.length" :runs="msg.toolRuns" />
           <div v-html="renderMarkdown(msg.content)" />
           <span
@@ -54,6 +65,7 @@ import ToolActivityList from "./ToolActivityList.vue";
 defineProps<{ msg: ChatMessage; streaming?: boolean }>();
 
 function renderMarkdown(text: string): string {
+  if (!text) return "";
   return marked.parse(text) as string;
 }
 </script>

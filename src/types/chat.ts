@@ -10,6 +10,7 @@ export interface ToolRun {
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+  thinking?: string;
   citations?: string[];
   attachments?: string[];
   toolRuns?: ToolRun[];
